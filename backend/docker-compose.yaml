@@ -1,0 +1,39 @@
+#Команда запуска docker-compose -f docker-compose.yaml up -d
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: openHouse
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 1878993qq
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - mynetwork
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_PASSWORD: 1878993qQ!
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - mynetwork
+
+volumes:
+  mysql_data:
+
+networks:
+  mynetwork:
+    driver: bridge
