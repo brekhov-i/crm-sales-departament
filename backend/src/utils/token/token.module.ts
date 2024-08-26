@@ -1,10 +1,14 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
+import { TokenService } from "./token.service";
+import { TokenSchema } from "./token.schema";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 
 @Module({
   imports: [
+    ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -14,9 +18,10 @@ import { JwtModule } from "@nestjs/jwt";
       }),
       inject: [ConfigService]
     }),
+    TypeOrmModule.forFeature([TokenSchema])
   ],
-  providers: [],
-  exports: [JwtModule]
+  providers: [TokenService],
+  exports: [JwtModule, TokenService]
 })
 
 export class TokenModule { }

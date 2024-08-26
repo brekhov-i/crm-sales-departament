@@ -1,25 +1,30 @@
-import { Body, Controller, Post, Put, Delete, Param, Get, Req } from "@nestjs/common";
-import { type Request } from 'express'
-import { type LoginBody } from "./user.types";
+import { Body, Controller, Post, Put, Delete, Param, Get, Req, Res } from "@nestjs/common";
+import { type Request, type Response } from 'express'
+import { RegistrationBody, RoleBody, type LoginBody } from "./user.types";
+import { UserService } from "./user.service";
 
 
 @Controller('/user')
 export class UserController { 
 
+  constructor(
+    private userService: UserService
+  ) {}
+
   @Get('/')
-  getAllUser() {}
+  getAllUser() {
+    console.log('hjgvh2')
+  }
 
   @Get('/:id')
-  getUserById(@Param('id') id: string) {}
+  getUserById(@Param('id') id: string) {
+    console.log('hjgvh1')
+  }
 
-  @Post('/login')
-  login(@Body() body: LoginBody) {}
-
-  @Post('/registration')
-  registration(@Body() body: any) {}
-
-  @Get('/refresh')
-  refreshToken(@Req() req: Request) {}
+  @Post('/role')
+  async createRole(@Body() body: RoleBody) {
+    await this.userService.createRole(body)
+  }
 
   @Put('/update/:id')
   updateUser(@Param('id') id: string, @Body() body: any) {}

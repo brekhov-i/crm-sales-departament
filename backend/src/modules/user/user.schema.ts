@@ -1,16 +1,26 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Roles } from "./role.schema";
 
 
-@Entity()
-export class User {
+@Entity({name: 'users'})
+export class UserSchema {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column("text")
-  firstName: string;
+  @Column("text", { nullable: false })
+  firstname: string;
 
-  @Column("text")
-  lastName: string;
+  @Column("text", { nullable: false })
+  lastname: string;
+
+  @Column("text", { nullable: false })
+  email: string;
+
+  @Column("text", { nullable: false })
+  password: string;
+
+  @OneToOne(type => Roles, role => role.id, { nullable: false })
+  role: number;
 
   @Column("boolean", { default: false })
   isActive: boolean
