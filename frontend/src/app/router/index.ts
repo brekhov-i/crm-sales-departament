@@ -6,13 +6,22 @@ const routes: RouteRecordRaw[] = [
   {
     name: 'Home',
     path: '/',
-    component: () => import('@/pages/index.vue')
+    component: () => import('@/pages/index.vue'),
+    meta: {
+      access: ['dashboard']
+    }
+  },
+  {
+    name: '403',
+    path: '/403',
+    component: () => import('@/pages/403.vue'),
   },
   {
     name: 'Login',
     path: '/login',
     component: () => import('@/pages/login.vue'),
     meta: {
+      auth: false,
       layout: 'auth'
     }
   },

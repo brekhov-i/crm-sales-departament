@@ -7,7 +7,7 @@
         <InputText v-model="v$.email.$model" id="email" />
       </Field>
       <Field id="password" label="Пароль" class="loginPage__form-field" :invalid="v$.password.$invalid" :error="v$.password.$errors[0]">
-        <InputText v-model="v$.password.$model" id="password" :password="true" disabled/>
+        <InputText v-model="v$.password.$model" id="password" :password="true"/>
       </Field>
       <Button @click="onSubmit()">Войти</Button>
     </div>
@@ -21,6 +21,11 @@ import InputText from '@/shared/ui/form/InputText.vue';
 import Button from '@/shared/ui/Button.vue';
 import { email, helpers, required } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
+import { useAuthStore } from '@/shared/store/AuthStore';
+import { useRouter } from 'vue-router';
+
+const authStore = useAuthStore()
+const router = useRouter()
 
 const formData = ref({
   email: '',
@@ -44,7 +49,9 @@ const onSubmit = async () => {
 
   if(!isFormCorrect) return;
 
-  console.log(v$)
+  await authStore.login(formData.value).then(() => {
+    router.push({name: 'Home'})
+  })
 }
 </script>
 
