@@ -1,9 +1,8 @@
 <template>
    <header class="header">
-    <Button class="header__btnBack" :icon="AngleLeft" size="large" @click="router.back()" />
+    <Button class="header__btnBack" :icon="AngleLeft" size="normal" @click="router.back()" />
     <h2 class="header__title">{{ route.meta.title }}</h2>
     <Brandcrumbs class="header__brandcrumbs"/>
-    
    </header>
 </template>
 

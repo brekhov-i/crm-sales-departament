@@ -2,7 +2,7 @@
   <component :is="getComponent" :class="['button', className]">
     <template v-if="!$slots.default">
       <div class="button__icon" v-if="icon">
-        <component v-if="icon && typeof icon === 'string'" :is="icon" />
+        <component v-if="icon && typeof icon !== 'string'" :is="icon" />
         <span v-else :class="[icon]"></span>
       </div>
       <div class="button__label" v-if="label">{{ label }}</div>
@@ -85,7 +85,11 @@ const size = computed(() => {
   cursor: pointer;
 
   &--only-icon {
+    min-width: 0;
     width: var(--size);
+    height: var(--size);
+    border-radius: 100%;
+    box-shadow: 0 4px 4px rgba(#000000, 0.3);
   }
 
   &--success {
@@ -97,6 +101,14 @@ const size = computed(() => {
     width: var(--size);
     height: var(--size);
     border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    svg {
+      width: 24px;
+      height: 24px;
+    }
   }
 }
 </style>

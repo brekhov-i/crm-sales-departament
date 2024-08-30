@@ -1,7 +1,7 @@
 <template>
   <div class="cabinetLayout">
     <Sidebar class="cabinetLayout__sidebar" />
-    <Header class="cabinetLayout__header" />
+    <!-- <Header class="cabinetLayout__header" /> -->
     <div class="cabinetLayout__main">
       <RouterView />
     </div>
@@ -9,12 +9,17 @@
 </template>
 
 <script setup lang="ts">
-import Header from './Header.vue';
-import Sidebar from './Sidebar.vue';
+import { Sidebar } from '@/widgets/Sidebar';
 
 
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+.cabinetLayout {
+  width: 100dvw;
+  height: 100dvh;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 30px;
+}
 </style>

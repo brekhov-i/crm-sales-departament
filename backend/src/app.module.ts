@@ -1,16 +1,17 @@
-import { Module } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { UserModule } from "./modules/user/user.module";
-import { UserSchema } from "./modules/user/user.schema";
-import { Roles } from "./modules/user/role.schema";
-import { TokenSchema } from "./utils/token/token.schema";
-
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserModule } from './modules/user/user.module';
+import { UserSchema } from './modules/user/user.schema';
+import { Roles } from './modules/user/role.schema';
+import { TokenSchema } from './utils/token/token.schema';
+import { MessagesModule } from './modules/messages/messages.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: process.env.NODE_ENV === 'development' ? '.development.env' : '.env',
+      envFilePath:
+        process.env.NODE_ENV === 'development' ? '.development.env' : '.env',
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -24,11 +25,11 @@ import { TokenSchema } from "./utils/token/token.schema";
         entities: [UserSchema, Roles, TokenSchema],
         synchronize: true,
       }),
-      inject: [ConfigService]
+      inject: [ConfigService],
     }),
-    UserModule
+    UserModule,
+    MessagesModule,
   ],
   controllers: [],
 })
-
-export class AppModule { }
+export class AppModule {}
