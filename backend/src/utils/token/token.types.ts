@@ -1,10 +1,10 @@
-import { User } from "@/modules/user/user.types"
+import { User } from '@/utils/types/user';
 
 export type payload = {
-  user: User
-}
+  user: User;
+};
 
 export type Tokens = {
-  access_token: string
-  refresh_token: string
-}
+  access_token: string;
+  refresh_token: string;
+};

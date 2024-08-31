@@ -3,17 +3,6 @@ export type LoginBody = {
   password: string;
 };
 
-export type User = {
-  id: number;
-  firstname: string;
-  lastname: string;
-  email: string;
-  phone: string;
-  password: string;
-  role: number;
-  isActive: boolean;
-};
-
 export type RegistrationBody = {
   firstname: string;
   lastname: string;

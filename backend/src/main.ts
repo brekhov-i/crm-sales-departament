@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { type NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import * as cookieParser from 'cookie-parser';
-// import initTelegramClient from './modules/telegram';
+// import initTelegramClient from './modules/messages/modules/telegram';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

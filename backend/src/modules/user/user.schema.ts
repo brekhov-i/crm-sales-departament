@@ -1,8 +1,16 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Roles } from './role.schema';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { RoleSchema } from '@/utils/schemas/role.schema';
+import { UserDB } from '@/utils/types/user';
 
 @Entity({ name: 'users' })
-export class UserSchema {
+export class UserSchema implements UserDB {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -12,10 +20,10 @@ export class UserSchema {
   @Column('text', { nullable: false })
   lastname: string;
 
-  @Column('text', { nullable: false })
+  @Column('varchar', { length: 255, nullable: false, unique: true })
   email: string;
 
-  @Column('text', { nullable: true })
+  @Column('varchar', { length: 20, nullable: true, unique: true })
   phone: string;
 
   @Column('text', { nullable: false })
@@ -24,8 +32,9 @@ export class UserSchema {
   @Column('text', { nullable: true })
   telegram: string;
 
-  @OneToOne(() => Roles, (role) => role.id, { nullable: false })
-  role: number;
+  @ManyToOne(() => RoleSchema, (role) => role.id, { nullable: false })
+  @JoinColumn()
+  role: RoleSchema;
 
   @Column('boolean', { default: false })
   isActive: boolean;

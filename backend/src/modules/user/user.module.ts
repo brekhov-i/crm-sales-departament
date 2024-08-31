@@ -1,14 +1,19 @@
 import { Module } from '@nestjs/common';
-import { TokenModule } from 'src/utils/token/token.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserSchema } from './user.schema';
-import { Roles } from './role.schema';
-import { AuthController } from './auth.controller';
+import { RoleSchema } from '@/utils/schemas/role.schema';
+import { AuthController } from '@/modules/auth/auth.controller';
+import { AuthModule } from '@/modules/auth/auth.module';
+import { TokenModule } from '@/utils/token/token.module';
 
 @Module({
-  imports: [TokenModule, TypeOrmModule.forFeature([UserSchema, Roles])],
+  imports: [
+    TokenModule,
+    AuthModule,
+    TypeOrmModule.forFeature([UserSchema, RoleSchema]),
+  ],
   controllers: [UserController, AuthController],
   providers: [UserService],
   exports: [UserService, TypeOrmModule],

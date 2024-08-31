@@ -1,34 +1,49 @@
-import { Body, Controller, Post, Put, Delete, Param, Get, Req, Res } from "@nestjs/common";
-import { type Request, type Response } from 'express'
-import { RegistrationBody, RoleBody, type LoginBody } from "./user.types";
-import { UserService } from "./user.service";
-
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
+import { UserService } from './user.service';
+import { RegisterBody } from '@/utils/types/auth';
+import { UserBody } from '@/utils/types/user';
+import { AuthGuard } from '@/modules/auth/auth.guard';
 
 @Controller('/user')
-export class UserController { 
+export class UserController {
+  constructor(private userService: UserService) {}
 
-  constructor(
-    private userService: UserService
-  ) {}
-
+  @UseGuards(AuthGuard)
   @Get('/')
-  getAllUser() {
-    console.log('hjgvh2')
+  async getAllUser() {
+    return await this.userService.getUsers();
   }
 
+  @UseGuards(AuthGuard)
   @Get('/:id')
-  getUserById(@Param('id') id: string) {
-    console.log('hjgvh1')
+  async getUserById(@Param('id') id: string) {
+    return await this.userService.getUserById(Number(id));
   }
 
-  @Post('/role')
-  async createRole(@Body() body: RoleBody) {
-    await this.userService.createRole(body)
+  @UseGuards(AuthGuard)
+  @Post('/')
+  async createUser(@Body() body: RegisterBody) {
+    return await this.userService.createUser(body);
   }
 
-  @Put('/update/:id')
-  updateUser(@Param('id') id: string, @Body() body: any) {}
+  @UseGuards(AuthGuard)
+  @Put('/:id')
+  async updateUser(@Param('id') id: string, @Body() body: UserBody) {
+    return await this.userService.updateUser(Number(id), body);
+  }
 
-  @Delete('/disabled/:id')
-  disabledUser(@Param('id') id: string) {}
+  @UseGuards(AuthGuard)
+  @Delete('/:id')
+  async deleteUser(@Param('id') id: string) {
+    return await this.userService.deleteUser(Number(id));
+  }
 }

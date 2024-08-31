@@ -1,10 +1,9 @@
-import { Module } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
-import { JwtModule } from "@nestjs/jwt";
-import { TokenService } from "./token.service";
-import { TokenSchema } from "./token.schema";
-import { TypeOrmModule } from "@nestjs/typeorm";
-
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { TokenService } from './token.service';
+import { TokenSchema } from './token.schema';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -16,12 +15,11 @@ import { TypeOrmModule } from "@nestjs/typeorm";
         secret: configService.get('secret'),
         signOptions: { expiresIn: '60s' },
       }),
-      inject: [ConfigService]
+      inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([TokenSchema])
+    TypeOrmModule.forFeature([TokenSchema]),
   ],
   providers: [TokenService],
-  exports: [JwtModule, TokenService]
+  exports: [JwtModule, TokenService],
 })
-
-export class TokenModule { }
+export class TokenModule {}

@@ -1,75 +1,39 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserSchema } from './user.schema';
+import { genSaltSync, hashSync } from 'bcrypt';
 import { Repository } from 'typeorm';
-import { LoginBody, RegistrationBody, RoleBody, User } from './user.types';
-import { compareSync, hashSync, genSaltSync } from 'bcrypt';
-import { TokenService } from 'src/utils/token/token.service';
-import { payload, Tokens } from '@/utils/token/token.types';
-import { Roles } from './role.schema';
+import { UserSchema } from './user.schema';
+import { RoleSchema } from '@/utils/schemas/role.schema';
+import { RegisterBody } from '@/utils/types/auth';
+import { UserBody } from '@/utils/types/user';
+import { UserDto } from '@/modules/user/dtos/user.dto';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(Roles) private roleModel: Repository<Roles>,
+    @InjectRepository(RoleSchema) private roleModel: Repository<RoleSchema>,
     @InjectRepository(UserSchema) private userModel: Repository<UserSchema>,
-    private tokenService: TokenService,
   ) {}
 
-  async getUser() {
-    const users = await this.userModel.find();
-
-    return users;
+  async getUsers() {
+    return await this.userModel.find({ relations: ['role'] }).then((res) => {
+      return res.map((user) => new UserDto(user));
+    });
   }
 
-  async getUserById(id: string) {
-    const user = await this.userModel.findOneBy({ id: Number(id) });
+  async getUserById(id: number) {
+    const user = await this.userModel.findOne({
+      where: { id },
+      relations: ['role'],
+    });
 
     if (!user)
       throw new HttpException(`Пользователь с id ${id}`, HttpStatus.NOT_FOUND);
 
-    return user;
+    return new UserDto(user);
   }
 
-  async login({ email, password }: LoginBody) {
-    const candidate = await this.userModel.findOne({ where: { email } });
-
-    if (!candidate)
-      throw new HttpException(
-        'Ошибка в email или пароле. Повторите попытку',
-        HttpStatus.UNAUTHORIZED,
-      );
-
-    const isValid = compareSync(password, candidate.password);
-
-    if (!isValid)
-      throw new HttpException(
-        'Ошибка в email или пароле. Повторите попытку',
-        HttpStatus.UNAUTHORIZED,
-      );
-
-    delete candidate.password;
-    const payload: payload = {
-      user: candidate,
-    };
-
-    const token = await this.tokenService.generateToken(payload);
-    await this.tokenService.saveToken(candidate.id, token.refresh_token);
-
-    return {
-      user: candidate,
-      tokens: {
-        ...token,
-      },
-    };
-  }
-
-  async registration(body: RegistrationBody) {
+  async createUser(body: RegisterBody) {
     const candidate = await this.userModel.findOne({
       where: { email: body.email },
     });
@@ -87,7 +51,7 @@ export class UserService {
     const user = this.userModel.create({
       ...body,
       password: hashPassword,
-      role: role.id,
+      role: role,
     });
 
     await this.userModel.save(user).then(() => {
@@ -95,44 +59,28 @@ export class UserService {
     });
   }
 
-  async refreshToken(refreshToken: string): Promise<Tokens> {
-    if (!refreshToken) throw new UnauthorizedException();
-    const user = this.tokenService.validateRefreshToken(refreshToken);
-    const tokenFromDB = await this.tokenService.findToken(refreshToken);
+  async updateUser(id: number, user: UserBody) {
+    const userDB = await this.userModel.findOne({
+      where: { id },
+      relations: ['role'],
+    });
 
-    if (!user || !tokenFromDB) throw new UnauthorizedException();
+    if (!userDB)
+      throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
 
-    const payload: payload = {
-      user,
-    };
-
-    const tokens = await this.tokenService.generateToken(payload);
-    await this.tokenService.saveToken(user.id, tokens.refresh_token);
-
-    return {
-      ...tokens,
-    };
+    let role = userDB.role;
+    if (user.role)
+      await this.roleModel
+        .findOne({
+          where: { id: user.roleId },
+        })
+        .then((res) => {
+          role = res;
+        });
+    return await this.userModel.update(id, { ...user, role });
   }
 
-  async updateUser(user: User) {
-    return await this.userModel.save(user);
-  }
-
-  async createRole(body: RoleBody) {
-    const candidate = await this.roleModel.findOne({
-      where: { name: body.name },
-    });
-
-    if (candidate)
-      throw new HttpException('Такая роль уже существует', HttpStatus.CONFLICT);
-
-    const newRole = this.roleModel.create({
-      ...body,
-      access: JSON.stringify(body.access),
-    });
-
-    await this.roleModel.save(newRole).then(() => {
-      throw new HttpException('Роль создана', HttpStatus.CREATED);
-    });
+  async deleteUser(id: number) {
+    return await this.userModel.delete(id);
   }
 }
