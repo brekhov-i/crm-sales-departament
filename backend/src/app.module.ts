@@ -19,6 +19,9 @@ import { ClientSchema } from '@/modules/client/client.schema';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { MetaModule } from '@/modules/meta/meta.module';
 import { ClientModule } from '@/modules/client/client.module';
+import { TelephonyModule } from '@/modules/telephony/telephony.module';
+import { DocumentsSchema } from '@/modules/documents/documents.schema';
+import { DocumentsModule } from '@/modules/documents/documents.module';
 
 @Module({
   imports: [
@@ -46,6 +49,7 @@ import { ClientModule } from '@/modules/client/client.module';
           StatusApartmentsSchema,
           MaterialConstructionSchema,
           StatusConstructionSchema,
+          DocumentsSchema,
         ],
         synchronize: true,
       }),
@@ -59,6 +63,8 @@ import { ClientModule } from '@/modules/client/client.module';
     ApartmentModule,
     ApartmentTypeModule,
     MetaModule,
+    TelephonyModule,
+    DocumentsModule,
   ],
   controllers: [],
 })

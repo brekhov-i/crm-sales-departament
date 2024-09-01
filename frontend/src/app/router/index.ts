@@ -25,6 +25,11 @@ const routes: RouteRecordRaw[] = [
       layout: 'auth'
     }
   },
+  {
+    name: 'Directory',
+    path: '/directory',
+    component: () => import('@/pages/directory.vue'),
+  },
 ]
 
 const router = createRouter({

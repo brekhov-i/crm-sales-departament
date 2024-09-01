@@ -20,10 +20,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserSchema } from '../user/user.schema';
 import { Client } from '@/utils/types/client';
+import { DocumentsSchema } from '@/modules/documents/documents.schema';
 
 @Entity({ name: 'clients' })
 export class ClientSchema implements Client {
@@ -57,4 +59,8 @@ export class ClientSchema implements Client {
   @ManyToOne(() => UserSchema, (user) => user.id)
   @JoinColumn()
   manager: UserSchema;
+
+  @OneToMany(() => DocumentsSchema, (document) => document.id)
+  @JoinColumn()
+  documents: DocumentsSchema[];
 }
