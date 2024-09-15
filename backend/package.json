@@ -34,14 +34,18 @@
     "dayjs": "^1.11.13",
     "docxtemplater": "^3.50.0",
     "input": "^1.0.1",
+    "jssip": "^3.10.1",
     "mysql2": "^3.11.0",
     "pdf-lib": "^1.17.1",
     "petrovich": "^0.2.1",
     "pizzip": "^3.1.7",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
+    "sip": "^0.0.6",
+    "sip.js": "^0.21.2",
     "telegram": "^2.24.11",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

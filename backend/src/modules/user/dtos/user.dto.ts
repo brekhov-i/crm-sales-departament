@@ -26,3 +26,17 @@ export class UserDto implements UserBody {
     this.isActive = model.isActive;
   }
 }
+
+export class UserPayload {
+  id: number;
+  roleId: number;
+  isActive: boolean;
+
+  constructor(model: UserDB) {
+    this.id = model.id;
+    if (model.role) {
+      this.roleId = model.role.id;
+    }
+    this.isActive = model.isActive;
+  }
+}

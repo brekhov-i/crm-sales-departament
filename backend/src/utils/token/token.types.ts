@@ -1,7 +1,7 @@
-import { User } from '@/utils/types/user';
+import { UserPayload } from '@/modules/user/dtos/user.dto';
 
 export type payload = {
-  user: User;
+  user: UserPayload;
 };
 
 export type Tokens = {

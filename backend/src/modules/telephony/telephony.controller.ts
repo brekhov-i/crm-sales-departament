@@ -1,14 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
-import { PbxService } from '@/modules/telephony/module/pbx.service';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { TelephonyService } from './telephony.service';
 
 @Controller('telephony')
 export class TelephonyController {
-  constructor(private readonly pbxModule: PbxService) {}
+  constructor(private readonly telephonyService: TelephonyService) {}
 
-  @Get('/test')
-  async test() {
-    const res = await this.pbxModule.call('+79281172665', '+79169924340');
-
-    console.log(res.data);
+  @Post('/call')
+  async makeCall() {
+    await this.telephonyService.makeCall();
   }
 }

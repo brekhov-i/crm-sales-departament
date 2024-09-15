@@ -18,6 +18,6 @@ import { RoleSchema } from '@/utils/schemas/role.schema';
   ],
   controllers: [MetaController],
   providers: [MetaService],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, MetaService],
 })
 export class MetaModule {}

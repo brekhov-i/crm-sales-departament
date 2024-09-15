@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TokenSchema } from './token.schema';
 import { Repository } from 'typeorm';
 import { User } from '@/utils/types/user';
+import { UserPayload } from '@/modules/user/dtos/user.dto';
 
 @Injectable()
 export class TokenService {
@@ -31,7 +32,7 @@ export class TokenService {
     };
   }
 
-  validateAccessToken(accessToken: string): User {
+  validateAccessToken(accessToken: string): UserPayload {
     try {
       return this.jwtService.verify(accessToken, {
         secret: this.configService.get('secret_access'),
@@ -41,7 +42,7 @@ export class TokenService {
     }
   }
 
-  validateRefreshToken(refreshToken: string): User {
+  validateRefreshToken(refreshToken: string): UserPayload {
     try {
       return this.jwtService.verify(refreshToken, {
         secret: this.configService.get('secret_refresh'),
@@ -57,9 +58,9 @@ export class TokenService {
     });
   }
 
-  async saveToken(userId: number, refreshToken: string) {
+  async saveToken(userId: number, refreshToken: string, userAgent: string) {
     const tokenData = await this.tokenModel.findOne({
-      where: { user: userId },
+      where: { user: userId, userAgent },
     });
 
     if (tokenData) {
@@ -70,6 +71,7 @@ export class TokenService {
     const token = this.tokenModel.create({
       user: userId,
       refresh_token: refreshToken,
+      userAgent,
     });
     return await this.tokenModel.save(token);
   }

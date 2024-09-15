@@ -77,6 +77,8 @@ export class UserService {
         .then((res) => {
           role = res;
         });
+
+    delete user.roleId;
     return await this.userModel.update(id, { ...user, role });
   }
 

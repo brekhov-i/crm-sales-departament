@@ -12,7 +12,7 @@ import { Repository } from 'typeorm';
 import { compareSync } from 'bcrypt';
 import type { payload } from '@/utils/token/token.types';
 import { TokenService } from '@/utils/token/token.service';
-import { UserDto } from '@/modules/user/dtos/user.dto';
+import { UserDto, UserPayload } from '@/modules/user/dtos/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +21,7 @@ export class AuthService {
     private tokenService: TokenService,
   ) {}
 
-  async login({ email, password }: LoginBody) {
+  async login({ email, password }: LoginBody, userAgent: string) {
     const candidate = await this.userModel.findOne({
       where: { email },
       relations: ['role'],
@@ -43,11 +43,15 @@ export class AuthService {
 
     delete candidate.password;
     const payload: payload = {
-      user: candidate,
+      user: new UserPayload(candidate),
     };
 
     const token = await this.tokenService.generateToken(payload);
-    await this.tokenService.saveToken(candidate.id, token.refresh_token);
+    await this.tokenService.saveToken(
+      candidate.id,
+      token.refresh_token,
+      userAgent,
+    );
 
     return {
       user: new UserDto(candidate),
@@ -57,7 +61,7 @@ export class AuthService {
     };
   }
 
-  async refreshToken(refreshToken: string): Promise<Tokens> {
+  async refreshToken(refreshToken: string, userAgent: string): Promise<Tokens> {
     if (!refreshToken) throw new UnauthorizedException();
     const user = this.tokenService.validateRefreshToken(refreshToken);
     const tokenFromDB = await this.tokenService.findToken(refreshToken);
@@ -69,7 +73,7 @@ export class AuthService {
     };
 
     const tokens = await this.tokenService.generateToken(payload);
-    await this.tokenService.saveToken(user.id, tokens.refresh_token);
+    await this.tokenService.saveToken(user.id, tokens.refresh_token, userAgent);
 
     return {
       ...tokens,
